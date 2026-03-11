@@ -25,14 +25,17 @@ def generate_loyalty_list():
     # Loading the model
     model = joblib.load(model_path)
 
-    # LOAD DATA WITH ENCODING FALLBACK (The Genius Fix)
+    # LOAD DATA WITH ENCODING & SEPARATOR AUTO-DETECTION (The Bulletproof Fix)
     try:
-        # Try standard UTF-8 first (standard for most modern systems)
-        data = pd.read_csv(input_path, encoding='utf-8')
-    except UnicodeDecodeError:
-        # Fallback for Excel-style CSVs or files with special currency/regional characters
-        print("⚠️ UTF-8 Decode failed, trying latin1 encoding fallback...")
-        data = pd.read_csv(input_path, encoding='latin1')
+        # 'sep=None' with 'engine=python' tells pandas to guess the separator (comma or semicolon)
+        data = pd.read_csv(input_path, sep=None, engine='python', encoding='utf-8')
+    except Exception:
+        try:
+            print("⚠️ UTF-8/Auto-sep failed, trying latin1 with auto-sep...")
+            data = pd.read_csv(input_path, sep=None, engine='python', encoding='latin1')
+        except Exception as e:
+            print(f"❌ Critical Data Load Error: {e}")
+            return
 
     # 3. FEATURE PREPARATION
     # Ensure columns match what the model was trained on
