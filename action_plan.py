@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import subprocess  # Added for auto-triggering predict.py
 from flask import Flask
 
 # Robust Mistral Import for v1.x and v2.x compatibility
@@ -12,7 +13,6 @@ except ImportError:
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
-# We prioritize the Environment Variable for security on Render
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "QiJh8V2kZ3IQL1eYCAnKqJSOJxSHbTyC")
 
 # Initialize client outside the route for performance
@@ -39,7 +39,6 @@ def get_ai_recommendation(member_id, prob, score):
     Tone: Professional, urgent, and empathetic. Start the SMS directly.
     """
     try:
-        # Standard v1/v2 chat completion syntax
         response = client.chat.complete(
             model="mistral-small-latest",
             messages=[{"role": "user", "content": prompt}]
@@ -50,13 +49,19 @@ def get_ai_recommendation(member_id, prob, score):
         return f"Hello! As a valued member {member_id}, call us for a special Loyalty Loan offer today!"
 
 def run_analysis():
-    """The core logic that processes the member list."""
-    try:
-        # Check if the data folder and file exist
-        file_path = 'data/top_50_loyalty_list.csv'
-        if not os.path.exists(file_path):
-            return "Analysis Pending: Waiting for 'predict.py' to generate at-risk member data."
+    """Ensures data exists before showing the report."""
+    file_path = 'data/top_50_loyalty_list.csv'
+    
+    # NEW GENIUS LOGIC: If data is missing, run predict.py automatically
+    if not os.path.exists(file_path):
+        print("Data missing. Triggering predict.py...")
+        try:
+            # This triggers your full pipeline to create the CSV
+            subprocess.run(["python", "predict.py"], check=True)
+        except Exception as e:
+            return f"Error auto-generating data: {e}. Please ensure predict.py is in the root folder."
 
+    try:
         df = pd.read_csv(file_path)
         # Analysis threshold: Process anyone with > 5% risk
         high_risk = df[df['churn_probability'] > 0.05].copy()
@@ -85,14 +90,24 @@ def index():
     report = run_analysis()
     return f"""
     <html>
-        <head><title>LoyaSense AI</title></head>
-        <body style="font-family: sans-serif; padding: 20px; line-height: 1.6;">
-            <h1 style="color: #2c3e50;">🤖 LoyaSense Engine: Agentic Action Plan</h1>
-            <p>Processing SACCO Behavioral Velocity via Mistral AI...</p>
-            <hr>
-            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap;">{report}</pre>
-            <br>
-            <p style="color: #7f8c8d;"><i>Status: Live | Deploy Region: Virginia (US-East)</i></p>
+        <head>
+            <title>LoyaSense AI Dashboard</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+        </head>
+        <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; line-height: 1.6; background-color: #f9f9f9; color: #333;">
+            <div style="max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h1 style="color: #2c3e50; margin-top: 0;">🤖 LoyaSense Engine</h1>
+                <p style="font-size: 1.1em; color: #555;">Agentic Retention Plan | Powered by Mistral AI</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                
+                <h3 style="color: #2c3e50;">Live Retention Recommendations:</h3>
+                <pre style="background: #2d3436; color: #dfe6e9; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; font-size: 0.9em;">{report}</pre>
+                
+                <div style="margin-top: 30px; padding: 15px; border-left: 5px solid #3498db; background: #ebf5fb;">
+                    <p style="margin: 0; font-size: 0.9em;"><strong>Status:</strong> Ready for Employer Review</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.8em; color: #7f8c8d;">Region: Virginia (US-East) | Runtime: Python 3.x</p>
+                </div>
+            </div>
         </body>
     </html>
     """
@@ -100,5 +115,4 @@ def index():
 if __name__ == "__main__":
     # Render assigns a dynamic PORT via environment variables
     port = int(os.environ.get("PORT", 5000))
-    # '0.0.0.0' allows external access on Render
     app.run(host='0.0.0.0', port=port)
