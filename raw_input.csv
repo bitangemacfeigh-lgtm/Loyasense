@@ -1,0 +1,16 @@
+import pandas as pd
+import random
+
+# Create a high-quality dataset for LoyaSense
+data = {
+    'member_id': [i for i in range(5001, 5101)], # 100 Members
+    'deposit': [random.randint(1000, 50000) for _ in range(100)],
+    'withdrawal': [random.randint(500, 40000) for _ in range(100)],
+    'engagement_score': [round(random.uniform(0.1, 1.0), 2) for _ in range(100)]
+}
+
+df = pd.DataFrame(data)
+
+# Save it to your local machine
+df.to_csv('loyasense_test_data.csv', index=False)
+print("✅ 'loyasense_test_data.csv' created. Upload this to your dashboard!")

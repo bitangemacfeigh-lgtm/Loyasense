@@ -8,65 +8,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-blue: #002d72; --accent-blue: #0056b3; --bg-gray: #f8fafc; }
-        body { background-color: var(--bg-gray); font-family: 'Inter', sans-serif; color: #334155; }
+        :root { 
+            --deep-bg: #0f172a; 
+            --card-bg: #1e293b; 
+            --accent-cyan: #22d3ee;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
         
-        /* Navbar & Header */
-        .navbar { background: var(--primary-blue); padding: 1.5rem 0; }
-        .hero-gradient { 
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
-            color: white; padding: 60px 0 100px 0; margin-bottom: -60px;
+        body { 
+            background-color: var(--deep-bg); 
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
-        /* Portal Section */
+        /* Dark Hero Section */
+        .hero-gradient { 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
+            color: white; padding: 80px 0; border-bottom: 1px solid var(--glass);
+        }
+
+        /* Glassmorphism Portal */
         .hero-section { 
-            background: white; border-radius: 20px; padding: 40px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+            background: var(--card-bg); 
+            border-radius: 20px; padding: 40px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            border: 1px solid var(--glass);
+            margin-top: -50px;
         }
         
-        .form-control { border-radius: 10px; border: 2px dashed #cbd5e1; padding: 12px; transition: 0.3s; }
-        .form-control:focus { border-color: var(--accent-blue); box-shadow: none; }
+        .form-control { 
+            background: #0f172a; border: 1px solid #334155; 
+            color: white; border-radius: 10px; padding: 12px;
+        }
+        .form-control:focus { background: #1e293b; color: white; border-color: var(--accent-cyan); box-shadow: none; }
         
         .btn-analyze { 
-            background: var(--accent-blue); color: white; border: none; 
-            padding: 12px 35px; border-radius: 10px; font-weight: 600; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--accent-cyan); color: #0f172a; border: none; 
+            padding: 12px 35px; border-radius: 10px; font-weight: 700; 
+            transition: 0.3s;
         }
-        .btn-analyze:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,86,179,0.3); color: white; }
+        .btn-analyze:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
 
-        /* Results & Animations */
-        #results { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Results Styling */
+        #results { margin-top: 40px; }
+        .text-muted { color: var(--text-muted) !important; }
 
+        /* Dynamic loader for Dark Mode */
         .loader-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+            background: rgba(15, 23, 42, 0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
         }
+        .spinner-border { color: var(--accent-cyan); }
+
+        footer { background: #0f172a; border-top: 1px solid var(--glass); }
+        
+        /* Ensure dynamic content looks good in Dark Mode */
+        .card.risk-card { background: var(--card-bg) !important; color: white !important; border: 1px solid var(--glass) !important; }
+        .bg-light { background-color: #0f172a !important; color: white !important; border: 1px solid var(--glass) !important; }
     </style>
 </head>
 <body>
 
 <div class="loader-overlay" id="loader">
-    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-    <h5 class="fw-bold">AI Agent Parsing Data...</h5>
-    <p class="text-muted">Calculating churn probabilities and generating missions.</p>
+    <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+    <h5 class="fw-bold text-white">Activating Neural Engines...</h5>
+    <p class="text-muted">Analyzing member churn vectors.</p>
 </div>
 
 <div class="hero-gradient text-center">
     <div class="container">
-        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-microchip me-2"></i>LOYASENSE</h1>
-        <p class="opacity-75 lead">The 0.01% Standard for Predictive Member Retention</p>
-        <span class="badge bg-success px-3 py-2"><i class="fas fa-check-circle me-1"></i> System Online: v4.0 Alpha</span>
+        <h1 class="display-4 fw-bold mb-2" style="letter-spacing: -1px;">
+            <i class="fas fa-layer-group me-3 text-info"></i>LOYASENSE <span class="text-info">OS</span>
+        </h1>
+        <p class="text-muted lead">AI-Driven Predictive Retention for Modern Saccos</p>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <span class="badge bg-dark border border-secondary px-3 py-2">MISTRAL-LARGE-V3</span>
+            <span class="badge bg-dark border border-secondary px-3 py-2">GEMINI-FLASH-ENABLED</span>
+        </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-11 col-lg-9">
             <div class="hero-section mb-5">
                 <div class="text-center mb-4">
-                    <h3 class="fw-bold">Institution Intelligence Portal</h3>
-                    <p class="text-muted">Drop your member CSV here to activate the Agentic Retention Layer.</p>
+                    <h3 class="fw-bold text-white">Intelligence Input</h3>
+                    <p class="text-muted small">Securely upload member transaction logs (CSV format)</p>
                 </div>
                 
                 <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
@@ -76,15 +107,15 @@
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-analyze w-100">
-                                <i class="fas fa-bolt me-2"></i>Execute Analysis
+                                <i class="fas fa-terminal me-2"></i>PROCESS DATA
                             </button>
                         </div>
                     </div>
                 </form>
 
                 {% if status_msg %}
-                <div class="alert alert-info mt-4 border-0 shadow-sm rounded-pill text-center py-2">
-                    <i class="fas fa-info-circle me-2"></i>{{ status_msg }}
+                <div class="alert bg-dark text-info mt-4 border border-info text-center py-2 small shadow-lg">
+                    <i class="fas fa-sync fa-spin me-2"></i>{{ status_msg }}
                 </div>
                 {% endif %}
             </div>
@@ -96,12 +127,12 @@
     </div>
 </div>
 
-<footer class="text-center py-5 mt-5 border-top bg-white">
+<footer class="text-center py-5 mt-5">
     <div class="container">
-        <p class="text-muted mb-1">© 2026 <strong>LoyaSense</strong> | Predictive Banking Solutions</p>
+        <p class="text-muted mb-1">© 2026 <strong>LoyaSense Intelligence</strong></p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="text-decoration-none text-muted small"><i class="fas fa-file-download me-1"></i> Sample CSV</a>
-            <a href="#" class="text-decoration-none text-muted small"><i class="fas fa-shield-alt me-1"></i> Privacy Protocol</a>
+            <a href="#" class="text-decoration-none text-muted small hover-info">System Logs</a>
+            <a href="#" class="text-decoration-none text-muted small hover-info">API Documentation</a>
         </div>
     </div>
 </footer>
