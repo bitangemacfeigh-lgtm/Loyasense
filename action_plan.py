@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import subprocess
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 # Robust Mistral Import
 try:
@@ -31,7 +31,7 @@ def get_ai_recommendation(member_id, prob, score):
         return f"Hello Member {member_id}, visit our branch for a special Loyalty Loan offer today!"
 
     prompt = f"""
-    Act as a SACCO Retention Genius. 
+    Act as a Financial Retention Genius. 
     Member ID: {member_id} | Churn Risk: {prob:.1f}% | Engagement: {score:.2f}
     Task: Write a 1-sentence personalized SMS offer. 
     - If Risk > 50%: Offer 'Priority Loyalty Loan' (3% discount).
@@ -63,7 +63,7 @@ def run_analysis():
         high_risk = df[df['churn_probability'] > 0.05].copy()
         
         if high_risk.empty:
-            return "<p>✅ All members are currently stable.</p>"
+            return "<p class='text-muted'>✅ All members are currently stable.</p>"
 
         html_cards = ""
         for _, row in high_risk.iterrows():
@@ -72,27 +72,33 @@ def run_analysis():
             score = row['engagement_score']
             ai_sms = get_ai_recommendation(member, prob, score)
             
-            # Priority Badges
+            # Priority Badges and Styles
             if prob > 80:
-                badge, color = "CRITICAL", "#e74c3c"
+                badge, color_class, border_color = "CRITICAL", "bg-danger", "#e74c3c"
             elif prob > 50:
-                badge, color = "HIGH RISK", "#f39c12"
+                badge, color_class, border_color = "HIGH RISK", "bg-warning text-dark", "#f39c12"
             else:
-                badge, color = "MONITOR", "#3498db"
+                badge, color_class, border_color = "MONITOR", "bg-info text-dark", "#3498db"
 
             html_cards += f"""
-            <div style="background:white; border-left: 6px solid {color}; padding:15px; margin-bottom:15px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                <div style="display:flex; justify-content:space-between;">
-                    <strong>Member {member}</strong>
-                    <span style="background:{color}; color:white; padding:2px 8px; border-radius:4px; font-size:0.75em; font-weight:bold;">{badge}</span>
+            <div class="card risk-card shadow-sm" style="border-left: 6px solid {border_color};">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Member {member}</h5>
+                        <span class="badge {color_class}">{badge}</span>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Churn Risk: <strong>{prob:.1f}%</strong> | Engagement Score: <strong>{score:.2f}</strong>
+                    </p>
+                    <div class="sms-quote">
+                        <i class="fas fa-comment-dots me-2 text-primary"></i>"{ai_sms}"
+                    </div>
                 </div>
-                <div style="font-size:0.85em; color:#666; margin:5px 0;">Churn Risk: {prob:.1f}% | Score: {score:.2f}</div>
-                <div style="background:#fdfdfd; border:1px solid #eee; padding:10px; margin-top:8px; border-radius:4px; font-style:italic;">"{ai_sms}"</div>
             </div>
             """
         return html_cards
     except Exception as e:
-        return f"Data Error: {e}"
+        return f"<div class='alert alert-danger'>Data Error: {e}</div>"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -107,37 +113,16 @@ def index():
                     subprocess.run(["python", "predict.py"], check=True)
                     status_msg = "✅ Upload successful. Model re-trained."
                 except:
-                    status_msg = "❌ Error running prediction."
+                    status_msg = "❌ Error running prediction engine."
+            else:
+                status_msg = "❌ Invalid file type. Please upload a CSV."
 
     report_html = run_analysis()
     
-    return f"""
-    <html>
-        <head>
-            <title>LoyaSense AI | Dashboard</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <style>body{{background:#f4f7f6; font-family:'Segoe UI',sans-serif;}} .container{{max-width:800px; margin:auto; padding:20px;}}</style>
-        </head>
-        <body>
-            <div class="container">
-                <div style="background:#1a73e8; color:white; padding:30px; border-radius:12px; margin-bottom:20px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-                    <h1 style="margin:0;">LoyaSense Engine</h1>
-                    <p style="opacity:0.9;">Predictive Churn Analysis & Agentic SMS Generation</p>
-                    
-                    <form method="post" enctype="multipart/form-data" style="margin-top:20px; background:rgba(255,255,255,0.1); padding:15px; border-radius:8px;">
-                        <label style="display:block; margin-bottom:10px; font-weight:bold;">Upload Latest Member Data (CSV):</label>
-                        <input type="file" name="file" accept=".csv" style="font-size:0.9em;">
-                        <input type="submit" value="Analyze Now" style="background:white; color:#1a73e8; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">
-                    </form>
-                    <p style="font-size:0.9em; margin-top:10px;">{status_msg}</p>
-                </div>
-
-                <h3 style="color:#2c3e50; border-bottom:2px solid #ddd; padding-bottom:10px;">Priority Retention Plan</h3>
-                {report_html}
-            </div>
-        </body>
-    </html>
-    """
+    # Passing the variables to your new dashboard.html file
+    return render_template('dashboard.html', 
+                           report_html=report_html, 
+                           status_msg=status_msg)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
