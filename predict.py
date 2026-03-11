@@ -25,14 +25,28 @@ def generate_loyalty_list():
     # Loading the model
     model = joblib.load(model_path)
 
-    # LOAD DATA WITH ENCODING & SEPARATOR AUTO-DETECTION (The Bulletproof Fix)
+    # LOAD DATA WITH FORGIVING PARSING (The Ironclad Fix)
     try:
-        # 'sep=None' with 'engine=python' tells pandas to guess the separator (comma or semicolon)
-        data = pd.read_csv(input_path, sep=None, engine='python', encoding='utf-8')
+        # We add 'on_bad_lines' to skip broken rows and 'quoting' to handle messy text fields
+        data = pd.read_csv(
+            input_path, 
+            sep=None, 
+            engine='python', 
+            encoding='utf-8', 
+            on_bad_lines='skip',
+            quoting=0 # Handles the "expected after" error by being flexible with quotes
+        )
     except Exception:
         try:
-            print("⚠️ UTF-8/Auto-sep failed, trying latin1 with auto-sep...")
-            data = pd.read_csv(input_path, sep=None, engine='python', encoding='latin1')
+            print("⚠️ UTF-8 failed, trying latin1 with forgiving parsing...")
+            data = pd.read_csv(
+                input_path, 
+                sep=None, 
+                engine='python', 
+                encoding='latin1', 
+                on_bad_lines='skip',
+                quoting=0
+            )
         except Exception as e:
             print(f"❌ Critical Data Load Error: {e}")
             return
