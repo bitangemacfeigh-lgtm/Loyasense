@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --deep-bg: #0f172a; 
-            --card-bg: #1e293b; 
+            --deep-bg: #020617; /* Midnight Black-Blue */
+            --card-bg: #0f172a; /* Deep Slate */
             --accent-cyan: #22d3ee;
             --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.05);
+            --text-muted: #64748b;
+            --glass-border: #1e293b;
         }
         
         body { 
@@ -24,69 +24,77 @@
             overflow-x: hidden;
         }
 
-        /* Dark Hero Section */
+        /* Pure Dark Header */
         .hero-gradient { 
-            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
-            color: white; padding: 80px 0; border-bottom: 1px solid var(--glass);
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%); 
+            color: white; padding: 80px 0; border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Glassmorphism Portal */
+        /* Pure Dark Portal */
         .hero-section { 
             background: var(--card-bg); 
             border-radius: 20px; padding: 40px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
-            border: 1px solid var(--glass);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            border: 1px solid var(--glass-border);
             margin-top: -50px;
         }
         
+        /* Input Overhaul - Removed all white/light gray */
         .form-control { 
-            background: #0f172a; border: 1px solid #334155; 
-            color: white; border-radius: 10px; padding: 12px;
+            background: #020617; border: 1px solid #334155; 
+            color: #22d3ee; border-radius: 10px; padding: 12px;
         }
-        .form-control:focus { background: #1e293b; color: white; border-color: var(--accent-cyan); box-shadow: none; }
+        .form-control::file-selector-button {
+            background: #1e293b; color: white; border: none; border-radius: 5px; margin-right: 15px;
+        }
+        .form-control:focus { background: #020617; color: #22d3ee; border-color: var(--accent-cyan); box-shadow: none; }
         
+        /* Button - Neon Focus */
         .btn-analyze { 
-            background: var(--accent-cyan); color: #0f172a; border: none; 
+            background: var(--accent-cyan); color: #020617; border: none; 
             padding: 12px 35px; border-radius: 10px; font-weight: 700; 
             transition: 0.3s;
         }
-        .btn-analyze:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+        /* Removed white on hover */
+        .btn-analyze:hover { background: #06b6d4; transform: scale(1.02); color: #020617; box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
 
-        /* Results Styling */
         #results { margin-top: 40px; }
         .text-muted { color: var(--text-muted) !important; }
 
-        /* Dynamic loader for Dark Mode */
+        /* Dark Mode Overlay */
         .loader-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+            background: #020617; z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
         }
         .spinner-border { color: var(--accent-cyan); }
 
-        footer { background: #0f172a; border-top: 1px solid var(--glass); }
+        /* Darkened Footer - No white background */
+        footer { background: #020617; border-top: 1px solid var(--glass-border); padding: 50px 0; }
         
-        /* Ensure dynamic content looks good in Dark Mode */
-        .card.risk-card { background: var(--card-bg) !important; color: white !important; border: 1px solid var(--glass) !important; }
-        .bg-light { background-color: #0f172a !important; color: white !important; border: 1px solid var(--glass) !important; }
+        /* Force global dark styles on injected HTML cards */
+        .card.risk-card { background: #0f172a !important; color: #f1f5f9 !important; border: 1px solid #1e293b !important; }
+        .bg-light { background-color: #020617 !important; color: #f1f5f9 !important; border: 1px solid #1e293b !important; }
+        .btn-outline-secondary { border-color: #334155 !important; color: #94a3b8 !important; }
+        .btn-outline-secondary:hover { background: #1e293b !important; color: white !important; }
     </style>
 </head>
 <body>
 
 <div class="loader-overlay" id="loader">
     <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-    <h5 class="fw-bold text-white">Activating Neural Engines...</h5>
-    <p class="text-muted">Analyzing member churn vectors.</p>
+    <h5 class="fw-bold text-white">Engaging Intelligence Layer...</h5>
+    <p class="text-muted">Mapping high-risk financial vectors.</p>
 </div>
 
 <div class="hero-gradient text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold mb-2" style="letter-spacing: -1px;">
-            <i class="fas fa-layer-group me-3 text-info"></i>LOYASENSE <span class="text-info">OS</span>
+        <h1 class="display-4 fw-bold mb-2" style="letter-spacing: -2px;">
+            <i class="fas fa-brain me-3 text-info"></i>LOYASENSE <span class="text-info">CORE</span>
         </h1>
-        <p class="text-muted lead">AI-Driven Predictive Retention for Modern Saccos</p>
+        <p class="text-muted lead">Zero-Leakage Predictive Retention System</p>
         <div class="d-flex justify-content-center gap-2 mt-3">
-            <span class="badge bg-dark border border-secondary px-3 py-2">MISTRAL-LARGE-V3</span>
-            <span class="badge bg-dark border border-secondary px-3 py-2">GEMINI-FLASH-ENABLED</span>
+            <span class="badge bg-transparent border border-secondary text-secondary px-3 py-2">MISTRAL_SML_V3</span>
+            <span class="badge bg-transparent border border-secondary text-secondary px-3 py-2">XGBOOST_ENGINE</span>
         </div>
     </div>
 </div>
@@ -96,8 +104,8 @@
         <div class="col-md-11 col-lg-9">
             <div class="hero-section mb-5">
                 <div class="text-center mb-4">
-                    <h3 class="fw-bold text-white">Intelligence Input</h3>
-                    <p class="text-muted small">Securely upload member transaction logs (CSV format)</p>
+                    <h3 class="fw-bold text-white">System Data Ingestion</h3>
+                    <p class="text-muted small">Load CSV logs for automated mission generation</p>
                 </div>
                 
                 <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
@@ -107,15 +115,15 @@
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-analyze w-100">
-                                <i class="fas fa-terminal me-2"></i>PROCESS DATA
+                                <i class="fas fa-play me-2"></i>INITIATE ANALYSIS
                             </button>
                         </div>
                     </div>
                 </form>
 
                 {% if status_msg %}
-                <div class="alert bg-dark text-info mt-4 border border-info text-center py-2 small shadow-lg">
-                    <i class="fas fa-sync fa-spin me-2"></i>{{ status_msg }}
+                <div class="mt-4 p-2 text-info text-center small border border-info border-opacity-25 rounded" style="background: rgba(34, 211, 238, 0.05);">
+                    <i class="fas fa-microchip me-2"></i>{{ status_msg }}
                 </div>
                 {% endif %}
             </div>
@@ -127,12 +135,12 @@
     </div>
 </div>
 
-<footer class="text-center py-5 mt-5">
+<footer class="text-center">
     <div class="container">
-        <p class="text-muted mb-1">© 2026 <strong>LoyaSense Intelligence</strong></p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="text-decoration-none text-muted small hover-info">System Logs</a>
-            <a href="#" class="text-decoration-none text-muted small hover-info">API Documentation</a>
+        <p class="text-muted mb-2">© 2026 <strong>LoyaSense Intelligence Node</strong></p>
+        <div class="d-flex justify-content-center gap-4">
+            <a href="#" class="text-decoration-none text-muted small"><i class="fas fa-code-branch me-1"></i> v4.0.2</a>
+            <a href="#" class="text-decoration-none text-muted small"><i class="fas fa-database me-1"></i> Secure Storage</a>
         </div>
     </div>
 </footer>

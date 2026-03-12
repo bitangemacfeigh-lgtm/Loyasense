@@ -22,21 +22,31 @@ def generate_loyalty_list():
     except Exception:
         data = pd.read_csv(input_path, sep=None, engine='python', encoding='latin1', on_bad_lines='skip', quoting=0)
 
-    # 2. FUZZY COLUMN MATCHING (The "Once and For All" Fix)
-    # Convert all columns to lowercase and remove spaces for matching
+    # 2. FUZZY COLUMN MATCHING
     data.columns = [c.lower().replace(' ', '_').strip() for c in data.columns]
 
-    # Map of what we need : common variations found in SACCO data
+    # --- UPDATED MAPPING VARIATIONS ---
     mapping = {
-        'member_id': ['member_id', 'id', 'account_no', 'member_no', 'client_id'],
-        'deposit': ['deposit', 'deposits', 'savings', 'total_deposit'],
-        'withdrawal': ['withdrawal', 'withdrawals', 'total_withdrawal'],
-        'engagement_score': ['engagement_score', 'score', 'activity_level']
+        'member_id': [
+            'member_id', 'id', 'account_no', 'member_no', 'client_id', 
+            'customer_id', 'acc_number', 'member_number', 'no'
+        ],
+        'deposit': [
+            'deposit', 'deposits', 'savings', 'total_deposit', 'contribution', 
+            'shares', 'monthly_contribution', 'credit_amount', 'inward'
+        ],
+        'withdrawal': [
+            'withdrawal', 'withdrawals', 'total_withdrawal', 'debit_amount', 
+            'payout', 'expenditure', 'outward', 'withdrawn'
+        ],
+        'engagement_score': [
+            'engagement_score', 'score', 'activity_level', 'loyalty_index', 
+            'usage_freq', 'rank', 'interaction_rating', 'rating'
+        ]
     }
 
     for target, variations in mapping.items():
         if target not in data.columns:
-            # Check if any variation exists in the uploaded file
             found = False
             for v in variations:
                 if v in data.columns:
@@ -67,8 +77,7 @@ def generate_loyalty_list():
     if 'is_flagged' not in hit_list.columns:
         hit_list['is_flagged'] = hit_list['churn_probability'] > 0.5
 
-    # 5. FINAL EXPORT (Safeguarded)
-    # We ensure these 4 columns exist before slicing
+    # 5. FINAL EXPORT
     final_cols = ['member_id', 'churn_probability', 'engagement_score', 'is_flagged']
     hit_list[final_cols].to_csv(output_path, index=False)
     

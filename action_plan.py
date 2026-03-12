@@ -43,60 +43,58 @@ def get_ai_recommendation(member_id, prob, score):
             model="mistral-small-latest",
             messages=[{"role": "user", "content": prompt}]
         )
-        return response.choices[0].message.content.strip().replace('"', "'") # Replace quotes to avoid HTML breaking
+        return response.choices[0].message.content.strip().replace('"', "'") 
     except Exception as e:
         return f"Hello Member {member_id}, we have a special Loyalty Loan discount for you!"
 
 def run_analysis():
-    """Processes data and returns an Executive Summary followed by Action Cards."""
+    """Processes data with a 100% Dark Theme injection."""
     file_path = 'data/top_50_loyalty_list.csv'
     
     if not os.path.exists(file_path):
         try:
             subprocess.run(["python", "predict.py"], check=True)
         except Exception as e:
-            return f"<p style='color:red;'>System Error: {e}</p>"
+            return f"<p style='color:#ff4d4d;'>System Error: {e}</p>"
 
     try:
         df = pd.read_csv(file_path)
         total_analyzed = len(df)
         
-        # Segmenting for the Executive Summary
         critical_count = len(df[df['churn_probability'] > 0.8])
         high_risk_count = len(df[(df['churn_probability'] > 0.5) & (df['churn_probability'] <= 0.8)])
         monitor_count = len(df[(df['churn_probability'] > 0.05) & (df['churn_probability'] <= 0.5)])
 
-        # 1. EXECUTIVE SUMMARY SECTION
+        # 1. EXECUTIVE SUMMARY (Midnight Themed)
         summary_html = f"""
-        <div class="alert alert-dark shadow-sm border-0 mb-4" style="background: #1a1a2e; color: white; border-radius: 15px;">
+        <div class="alert shadow-lg border-0 mb-4" style="background: #0f172a; color: #f1f5f9; border: 1px solid #1e293b !important; border-radius: 15px;">
             <div class="row text-center py-2">
-                <div class="col-md-3 border-end border-secondary">
-                    <small class="text-uppercase opacity-75" style="font-size: 0.7rem;">Members Scanned</small>
-                    <h3 class="fw-bold mb-0">{total_analyzed}</h3>
+                <div class="col-md-3 border-end border-secondary border-opacity-25">
+                    <small class="text-uppercase opacity-50" style="font-size: 0.7rem;">Scanned</small>
+                    <h3 class="fw-bold mb-0" style="color: #22d3ee;">{total_analyzed}</h3>
                 </div>
-                <div class="col-md-3 border-end border-secondary">
-                    <small class="text-uppercase text-danger" style="font-size: 0.7rem;">Critical Risk</small>
-                    <h3 class="fw-bold mb-0 text-danger">{critical_count}</h3>
+                <div class="col-md-3 border-end border-secondary border-opacity-25">
+                    <small class="text-uppercase" style="font-size: 0.7rem; color: #ff4d4d;">Critical</small>
+                    <h3 class="fw-bold mb-0" style="color: #ff4d4d;">{critical_count}</h3>
                 </div>
-                <div class="col-md-3 border-end border-secondary">
-                    <small class="text-uppercase text-warning" style="font-size: 0.7rem;">High Risk</small>
-                    <h3 class="fw-bold mb-0 text-warning">{high_risk_count}</h3>
+                <div class="col-md-3 border-end border-secondary border-opacity-25">
+                    <small class="text-uppercase" style="font-size: 0.7rem; color: #fbbf24;">High Risk</small>
+                    <h3 class="fw-bold mb-0" style="color: #fbbf24;">{high_risk_count}</h3>
                 </div>
                 <div class="col-md-3">
-                    <small class="text-uppercase text-info" style="font-size: 0.7rem;">Under Monitor</small>
-                    <h3 class="fw-bold mb-0 text-info">{monitor_count}</h3>
+                    <small class="text-uppercase" style="font-size: 0.7rem; color: #38bdf8;">Monitor</small>
+                    <h3 class="fw-bold mb-0" style="color: #38bdf8;">{monitor_count}</h3>
                 </div>
             </div>
         </div>
-        <h4 class="mb-3 fw-bold"><i class="fas fa-bullseye me-2 text-primary"></i>Priority Retention Missions</h4>
+        <h4 class="mb-4 fw-bold text-white"><i class="fas fa-satellite-dish me-2 text-info"></i>Active Retention Missions</h4>
         """
 
-        # 2. MEMBER ACTION CARDS SECTION
         df = df.sort_values(by='churn_probability', ascending=False)
         high_risk = df[df['churn_probability'] > 0.05].copy()
         
         if high_risk.empty:
-            return summary_html + "<p class='text-muted text-center'>✅ All members are currently stable.</p>"
+            return summary_html + "<p class='text-muted text-center'>✅ Neural scan complete. All members stable.</p>"
 
         html_cards = summary_html
         for _, row in high_risk.iterrows():
@@ -106,45 +104,45 @@ def run_analysis():
             ai_sms = get_ai_recommendation(member, prob, score)
             
             if prob > 80:
-                badge, color_class, border_color = "CRITICAL", "bg-danger", "#e74c3c"
+                badge, badge_style, border_color = "CRITICAL", "background: #7f1d1d; color: #fecaca;", "#ef4444"
             elif prob > 50:
-                badge, color_class, border_color = "HIGH RISK", "bg-warning text-dark", "#f39c12"
+                badge, badge_style, border_color = "HIGH RISK", "background: #78350f; color: #fef3c7;", "#f59e0b"
             else:
-                badge, color_class, border_color = "MONITOR", "bg-info text-dark", "#3498db"
+                badge, badge_style, border_color = "MONITOR", "background: #1e3a8a; color: #dbeafe;", "#3b82f6"
 
             html_cards += f"""
-            <div class="card risk-card shadow-sm mb-4" style="border: none; border-radius: 12px; border-left: 8px solid {border_color}; transition: transform 0.2s;">
+            <div class="card mb-4" style="background: #0f172a; border: 1px solid #1e293b; border-left: 5px solid {border_color}; border-radius: 12px;">
                 <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h5 class="fw-bold mb-1">Member ID: {member}</h5>
-                            <p class="text-muted small mb-0">Analysis complete: Churn probability is {prob:.1f}%</p>
+                            <h5 class="fw-bold text-white mb-0">Member {member}</h5>
+                            <span class="text-muted small">Risk Vector: {prob:.1f}%</span>
                         </div>
-                        <span class="badge {color_class} px-3 py-2">{badge}</span>
+                        <span class="badge rounded-pill px-3 py-2" style="{badge_style}">{badge}</span>
                     </div>
                     
-                    <div class="row mb-3 bg-light rounded p-3 mx-0">
-                        <div class="col-6 border-end">
-                            <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem;">Probability</small>
-                            <span class="fw-bold h5">{prob:.1f}%</span>
+                    <div class="row mb-3 g-0 rounded" style="background: #020617; border: 1px solid #1e293b;">
+                        <div class="col-6 border-end border-secondary border-opacity-25 p-3 text-center">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Churn Prob</small>
+                            <span class="fw-bold h5 text-white">{prob:.1f}%</span>
                         </div>
-                        <div class="col-6 ps-4">
-                            <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem;">Engagement</small>
-                            <span class="fw-bold h5">{score:.2f}</span>
+                        <div class="col-6 p-3 text-center">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Engage Score</small>
+                            <span class="fw-bold h5 text-white">{score:.2f}</span>
                         </div>
                     </div>
 
-                    <div class="p-3 mb-3 bg-white border-start border-3 border-primary rounded shadow-sm" style="font-style: italic; background-color: #f8f9ff !important;">
-                        <small class="d-block text-primary fw-bold mb-1"><i class="fas fa-robot me-1"></i> AI AGENT RECOMMENDED MESSAGE:</small>
-                        "{ai_sms}"
+                    <div class="p-3 mb-3 rounded" style="background: rgba(34, 211, 238, 0.03); border: 1px dashed #1e293b;">
+                        <small class="d-block text-info fw-bold mb-1" style="font-size: 0.7rem;"><i class="fas fa-comment-dots me-1"></i> AI PROPOSED COMMUNICATION:</small>
+                        <span class="text-white" style="font-style: italic;">"{ai_sms}"</span>
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText('{ai_sms}')">
+                        <button class="btn btn-sm" style="background: #1e293b; color: #94a3b8; border: 1px solid #334155;" onclick="navigator.clipboard.writeText('{ai_sms}')">
                             <i class="fas fa-copy me-1"></i> Copy
                         </button>
-                        <a href="https://wa.me/?text={ai_sms}" target="_blank" class="btn btn-success btn-sm px-4">
-                            <i class="fab fa-whatsapp me-1"></i> Deploy SMS
+                        <a href="https://wa.me/?text={ai_sms}" target="_blank" class="btn btn-sm px-4" style="background: #059669; color: white;">
+                            <i class="fab fa-whatsapp me-1"></i> Deploy
                         </a>
                     </div>
                 </div>
@@ -152,7 +150,7 @@ def run_analysis():
             """
         return html_cards
     except Exception as e:
-        return f"<div class='alert alert-danger'>Data Error: {e}</div>"
+        return f"<div class='alert' style='background:#7f1d1d; color:white;'>Data Engine Error: {e}</div>"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -164,17 +162,14 @@ def index():
                 file.save(os.path.join(UPLOAD_FOLDER, 'raw_input.csv'))
                 try:
                     subprocess.run(["python", "predict.py"], check=True)
-                    status_msg = "✅ Upload successful. Model re-trained."
+                    status_msg = "✅ Log Ingested. Neural model updated."
                 except:
-                    status_msg = "❌ Error running prediction engine."
+                    status_msg = "❌ Error: Prediction engine failure."
             else:
-                status_msg = "❌ Invalid file type. Please upload a CSV."
+                status_msg = "❌ Protocol Error: CSV file required."
 
     report_html = run_analysis()
-    
-    return render_template('dashboard.html', 
-                           report_html=report_html, 
-                           status_msg=status_msg)
+    return render_template('dashboard.html', report_html=report_html, status_msg=status_msg)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
