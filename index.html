@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoyaSense | Retention Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-8 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-cyan-400">LoyaSense <span class="text-slate-500 text-lg font-normal">v2.0</span></h1>
+            <p class="text-slate-400">Predictive Retention Intelligence System</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                <h2 class="text-sm uppercase tracking-widest text-slate-500 mb-4">Neural Risk Analysis</h2>
+                <div class="text-5xl font-bold text-red-500 mb-2">{{ data.analysis_metrics.churn_probability }}</div>
+                <div class="inline-block bg-red-900/30 text-red-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                    {{ data.analysis_metrics.risk_category }} CHURN RISK
+                </div>
+                <p class="text-slate-400 text-sm italic">Engine: {{ data.analysis_metrics.engine }}</p>
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                <h2 class="text-sm uppercase tracking-widest text-slate-500 mb-4">Agentic Mission</h2>
+                <p class="text-slate-300 mb-4 font-medium">"{{ data.agentic_action.recommended_offer }}"</p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Strategist:</span>
+                        <span class="text-cyan-400">{{ data.agentic_action.strategist }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Action:</span>
+                        <span class="text-slate-300">{{ data.agentic_action.action_type }}</span>
+                    </div>
+                </div>
+                <button class="w-full mt-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded-lg transition">Deploy to WhatsApp</button>
+            </div>
+        </div>
+
+        <footer class="mt-8 text-center text-slate-600 text-xs">
+            System State: {{ data.system_state }} | Connected to Silicon Savannah Cloud
+        </footer>
+    </div>
+</body>
+</html>

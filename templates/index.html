@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoyaSense Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center font-sans">
+    <div class="max-w-2xl w-full p-6">
+        <div class="mb-10 text-center">
+            <h1 class="text-3xl font-black text-cyan-400">LoyaSense</h1>
+            <p class="text-slate-500 text-xs uppercase tracking-widest">Predictive Retention Intelligence</p>
+        </div>
+
+        {% if not active %}
+        <div class="bg-slate-800 border border-slate-700 p-10 rounded-2xl text-center shadow-2xl">
+            <p class="text-slate-400 mb-6">System ID: Silicon-Savannah-Node-01</p>
+            <form method="POST">
+                <button class="bg-cyan-600 hover:bg-cyan-500 px-8 py-3 rounded-full font-bold transition-all transform hover:scale-105">
+                    Execute Analysis Mission
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div class="space-y-6 animate-in fade-in duration-500">
+            <div class="bg-slate-800 p-6 rounded-2xl border-l-4 border-red-500 shadow-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-slate-500 text-xs font-bold uppercase">Churn Risk</p>
+                        <h2 class="text-5xl font-black text-white">{{ data.analysis.score }}</h2>
+                    </div>
+                    <span class="bg-red-900/30 text-red-400 text-[10px] font-bold px-2 py-1 rounded italic">
+                        {{ data.analysis.status }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-2xl border-l-4 border-blue-500 shadow-xl">
+                <p class="text-slate-500 text-xs font-bold uppercase mb-3">Agentic Recommendation ({{ data.agentic.strategist }})</p>
+                <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
+                    <p class="text-blue-300 font-medium italic">"{{ data.agentic.offer }}"</p>
+                </div>
+            </div>
+
+            <div class="bg-cyan-900/20 border border-cyan-500/30 p-6 rounded-2xl shadow-inner">
+                <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-2 tracking-tighter">Executive Intelligence Summary</h4>
+                <p class="text-slate-300 text-sm leading-relaxed italic">
+                    The system has successfully transitioned from <span class="text-cyan-400 font-semibold">Data Entropy</span> (Fuzzy Matching) to 
+                    <span class="text-cyan-400 font-semibold">Predictive Insight</span> (XGBoost) to <span class="text-cyan-400 font-semibold">Autonomous Action</span> (Mistral). 
+                    The lag between risk detection and strategic intervention has been reduced to zero.
+                </p>
+            </div>
+
+            <div class="text-center pt-4">
+                <a href="/" class="text-slate-600 text-xs hover:text-slate-400 underline">Reset Engine State</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
