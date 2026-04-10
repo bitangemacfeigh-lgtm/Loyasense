@@ -53,4 +53,4 @@ def run_loyasense_demo():
     print(f"{Fore.GREEN}SYSTEM READY: Awaiting Manager Execution.{Style.RESET_ALL}\n")
 
 if __name__ == "__main__":
-    run_loyasense_demo()
+    app.run()
